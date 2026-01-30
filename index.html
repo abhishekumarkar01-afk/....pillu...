@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Favorite Person 💖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #ffc3a0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bg-layer {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            z-index: -2;
+        }
+
+        /* Floating Hearts Background */
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+            z-index: -1;
+            animation: floatUp 6s linear infinite;
+        }
+
+        @keyframes floatUp {
+            from { transform: translateY(100vh) scale(0); opacity: 1; }
+            to { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* Card System */
+        .card {
+            display: none;
+            width: 90%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            padding: 40px 25px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.4);
+            animation: cardPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .active { display: block !important; }
+
+        @keyframes cardPop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+        h1 { font-family: 'Dancing Script', cursive; color: #ff4d6d; font-size: 2.8rem; margin-bottom: 20px; }
+        p { color: #444; line-height: 1.6; margin-bottom: 25px; font-weight: 500; font-size: 1.1rem; }
+
+        /* The Big Bunny Button */
+        .main-bunny {
+            font-size: 100px;
+            cursor: pointer;
+            display: inline-block;
+            transition: 0.3s;
+            animation: bunnyJump 2s infinite ease-in-out;
+        }
+        .main-bunny:hover { transform: scale(1.2); }
+        @keyframes bunnyJump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+
+        .btn {
+            background: #ff4d6d; color: white; border: none;
+            padding: 15px 35px; border-radius: 50px; font-weight: bold;
+            cursor: pointer; width: 100%; transition: 0.3s; font-size: 1rem;
+            box-shadow: 0 10px 20px rgba(255, 77, 109, 0.2);
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(255, 77, 109, 0.3); }
+
+        input {
+            width: 100%; padding: 15px; border-radius: 50px;
+            border: 2px solid #ffccd5; margin-bottom: 20px;
+            text-align: center; outline: none; font-size: 1rem;
+        }
+
+        /* Curtain Layer */
+        .curtains {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; z-index: 10000;
+        }
+        .curtain-panel {
+            width: 50%; height: 100%; background: #c0392b;
+            transition: 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+            display: flex; align-items: center; justify-content: center;
+            color: #f1c40f; font-family: 'Dancing Script'; font-size: 3rem;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.4);
+        }
+        .left { border-right: 2px solid #f1c40f; }
+        .right { border-left: 2px solid #f1c40f; }
+        .open .left { transform: translateX(-100%); }
+        .open .right { transform: translateX(100%); }
+
+        /* Poem Area */
+        .poem-container {
+            text-align: left; font-size: 1rem; line-height: 1.8;
+            max-height: 350px; overflow-y: auto; white-space: pre-line;
+            padding: 20px; background: rgba(255, 255, 255, 0.5);
+            border-radius: 20px; color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+
+<div class="curtains" id="curtainLayer">
+    <div class="curtain-panel left">Bubu</div>
+    <div class="curtain-panel right">Dubu</div>
+</div>
+
+<div class="card active" id="p0">
+    <h1>Hey Palak... 💖</h1>
+    <p>A little surprise is waiting for you! Click the bunny to start.</p>
+    <div class="main-bunny" onclick="startApp()">🐰</div>
+</div>
+
+<div class="card" id="p1">
+    <h1>Sweet Thoughts ✨</h1>
+    <p id="msgText">Every time I think of you, I smile like an idiot. 😊</p>
+    <button class="btn" onclick="nextMsg()">Next Surprise 💌</button>
+</div>
+
+<div class="card" id="p2">
+    <h1>For You! 🌸</h1>
+    <div style="font-size: 60px; margin: 20px 0;">🐰🌷🐰</div>
+    <p>These bunnies are sending you virtual hugs and flowers today!</p>
+    <button class="btn" onclick="showPage(3)">Open The Secret Lock 🤫</button>
+</div>
+
+<div class="card" id="p3">
+    <h1>The Heart Lock</h1>
+    <p>Click the heart to enter our secret code.</p>
+    <div style="font-size: 80px; cursor:pointer; animation: bunnyJump 1.5s infinite;" onclick="showInput()">❤️</div>
+    <div id="inputArea" style="display:none; margin-top: 20px;">
+        <input type="password" id="pilluKey" placeholder="Enter 'pillu'...">
+        <button class="btn" onclick="openCurtains()">Reveal My Heart 💍</button>
+    </div>
+</div>
+
+<div class="card" id="p4">
+    <h1>To My Pillu ❤️</h1>
+    <div class="poem-container">
+        Pillu,
+        tum sirf meri girlfriend nahi ho,
+        tum wo ehsaas ho jo bina chuye bhi dil ko choo jaata hai.
+
+        Jab duniya shor machati hai, tum meri khamoshi ban jaati ho, aur jab main tootne lagta hoon, tum meri saans ban ke mujhe sambhaal leti ho.
+
+        Tumhari ek muskaan, meri hazaar thakaawaton ko hara deti hai. Tumhara ek “sab theek ho jaayega”, meri har jung jeeta deta hai.
+
+        Pata hai, pyaar kya hota hai?
+        Pyaar wo hota hai jab tum meri kamiyon ko bhi apni duaon mein shamil kar leti ho.
+        Jab tum meri galtiyon ke aage meri niyat dekh leti ho.
+
+        Mujhe tumhara haath nahi chahiye sirf, mujhe tumhara saath chahiye. Wo saath jo har mod pe kahe— “Main hoon na, darr mat.”
+
+        Pillu, tum wo sukoon ho jo bheed mein bhi akela mehsoos nahi hone deta. Tum wo ghar ho jahan laut ke aane ka mann karta hai chahe din kitna bhi bura kyun na ho.
+
+        Main wada nahi karta ki main perfect hoon, par ye wada zaroor karta hoon ki tumhare liye real hoon. Gussa bhi, pyaar bhi, fight bhi, par chhod ke kabhi nahi jaaunga.
+
+        Agar kabhi hum khamosh ho jaayein, to samajh lena ye pyaar thak gaya nahi, bas aur gehra ho raha hai.
+
+        Aur agar kabhi tumhara mann bhatak jaaye, to bas itna yaad rakhna— kisi kone mein ek dil hamesha tumhara naam le raha hoga, bina shor, bina shart, sirf tumhare liye.
+
+        Pillu, tum meri aadat nahi ho, tum meri zarurat bhi nahi ho, tum meri choice ho… roz, har din, baar-baar. ❤️
+    </div>
+    <button class="btn" style="margin-top:20px" onclick="location.reload()">I Love You! 🌸</button>
+</div>
+
+<script>
+    // Create floating hearts automatically
+    function createHeart() {
+        const h = document.createElement('div');
+        h.className = 'floating-heart';
+        h.innerHTML = ['💖','💗','🌸','✨'][Math.floor(Math.random()*4)];
+        h.style.left = Math.random() * 100 + 'vw';
+        h.style.animationDuration = (Math.random() * 3 + 4) + 's';
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 6000);
+    }
+    setInterval(createHeart, 800);
+
+    function showPage(num) {
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        document.getElementById('p' + num).classList.add('active');
+    }
+
+    function startApp() {
+        confetti();
+        showPage(1);
+    }
+
+    const messages = [
+        "You are the most precious person in my world. 🌎",
+        "Pata hai? Your smile is my favorite thing ever. ✨",
+        "I want to spend every single second with you. 💍",
+        "You are my peaceful home in this crazy world. ❤️"
+    ];
+    let mIdx = 0;
+
+    function nextMsg() {
+        if (mIdx < messages.length) {
+            document.getElementById('msgText').innerText = messages[mIdx];
+            mIdx++;
+        } else {
+            showPage(2);
+        }
+    }
+
+    function showInput() {
+        document.getElementById('inputArea').style.display = 'block';
+    }
+
+    function openCurtains() {
+        const key = document.getElementById('pilluKey').value.toLowerCase();
+        if (key === 'pillu') {
+            const cl = document.getElementById('curtainLayer');
+            cl.style.display = 'flex';
+            
+            setTimeout(() => {
+                cl.classList.add('open');
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+            }, 100);
+
+            setTimeout(() => {
+                showPage(4);
+            }, 1200);
+        } else {
+            alert("Wrong code! Think about what I call you with love... 🌸");
+        }
+    }
+</script>
+
+</body>
+</html>
